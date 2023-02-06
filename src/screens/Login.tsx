@@ -14,6 +14,7 @@ import {
   FormControl,
   InputRightElement,
   FormLabel,
+  tokenToCSSVar,
 } from '@chakra-ui/react';
 import { FaUserAlt, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -21,7 +22,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { UserContext } from '../context/UserContext';
-import { userLogin } from '../utils/user';
+import { UserData, userLogin } from '../utils/user';
 import { MdAlternateEmail } from 'react-icons/md';
 
 enum FieldName {
@@ -48,13 +49,13 @@ const schema = yup.object({
 
 const Login = () => {
   const navigate = useNavigate();
-  const { onSignInSuccess } = useContext(UserContext);
+  const { onSignInSuccess, login } = useContext(UserContext);
 
   const formMethods = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
-      [FieldName.email]: 'solivar@gmail.com',
-      [FieldName.password]: 'alenka',
+      [FieldName.email]: '8@8.com',
+      [FieldName.password]: 'osemosem',
     },
   });
 
@@ -71,15 +72,14 @@ const Login = () => {
   };
 
   const onClickLogin = async (e: any) => {
-    await handleSubmit((formValues) => {
-      // console.log('data', formValues);
-      userLogin({
-        onSuccess: (userData) => {
+    await handleSubmit(async (formValues) => {
+      await login({
+        email: formValues.email,
+        password: formValues.password,
+        onSuccess: (userData: UserData) => {
           onSignInSuccess(userData);
           navigate('/home');
         },
-        email: formValues.email,
-        password: formValues.password,
       });
     })(e);
   };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Flex,
   Heading,
@@ -17,13 +17,14 @@ import { createEvent } from '../utils/event';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useCounter } from './useCounter';
+import { UserContext } from '../context/UserContext';
 
 enum FieldName {
   title = 'title',
   description = 'description',
   date = 'date',
   place = 'place',
+  capacity = 'capacity',
 }
 
 type FormValues = {
@@ -31,6 +32,7 @@ type FormValues = {
   description: string;
   date: Date;
   place: string;
+  capacity: number;
 };
 
 const schema = yup.object({
@@ -38,10 +40,14 @@ const schema = yup.object({
   [FieldName.description]: yup.string().required('Zadaj popis, prosím.'),
   [FieldName.date]: yup.date().required('Zadaj dátum konania, prosím.'),
   [FieldName.place]: yup.string().required('Zadaj miesto konania, prosím.'),
+  [FieldName.capacity]: yup
+    .number()
+    .required('Zadaj maximálnu kapacitu, prosím.'),
 });
 
 const CreateEvent = () => {
   const navigate = useNavigate();
+  const { accessToken, userInfo } = useContext(UserContext);
 
   const formMethods = useForm<FormValues>({
     resolver: yupResolver(schema),
@@ -62,16 +68,18 @@ const CreateEvent = () => {
   const onClickAddEvent = async (e: any) => {
     await handleSubmit((formValues) => {
       // console.log('data', formValues);
-
-      createEvent({
-        place: formValues.place,
-        date: String(formValues.date),
-        description: formValues.description,
-        title: formValues.title,
-        userId: 'ecba0ad8-8ace-4b8a-be62-6299602c8e2d',
-
-        onAddSuccess: () => navigate('/home'),
-      });
+      if (userInfo?.id) {
+        createEvent({
+          place: formValues.place,
+          date: String(formValues.date),
+          description: formValues.description,
+          title: formValues.title,
+          userId: userInfo.id,
+          maxCapacity: formValues.capacity,
+          token: accessToken,
+          onAddSuccess: () => navigate('/home'),
+        });
+      }
     })(e);
   };
 
@@ -120,6 +128,14 @@ const CreateEvent = () => {
                   <Input type="text" {...register('place')} />
                   <FormErrorMessage>
                     {errors.place && errors.place.message}
+                  </FormErrorMessage>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Maximálna kapacita</FormLabel>
+                  <Input type="number" {...register('capacity')} />
+                  <FormErrorMessage>
+                    {errors.capacity && errors.capacity.message}
                   </FormErrorMessage>
                 </FormControl>
 

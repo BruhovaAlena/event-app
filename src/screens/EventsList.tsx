@@ -15,10 +15,11 @@ import { useQuery } from '@tanstack/react-query';
 import { getAttendingEventByUserId } from '../utils/event';
 import { Event } from '../types/event';
 import Card from '../components/Card';
+import { getDateAsText } from '../utils/date';
 
 const EventsList = () => {
   const navigate = useNavigate();
-  const { userInfo } = useContext(UserContext);
+  const { userInfo, accessToken } = useContext(UserContext);
   let boxBg = useColorModeValue('white !important', '#111c44 !important');
 
   const {
@@ -26,10 +27,12 @@ const EventsList = () => {
     status,
     error,
   } = useQuery<Event[]>({
-    queryKey: ['attendingEvents'],
+    enabled: Boolean(userInfo?.id),
+    queryKey: ['attendingEvents', userInfo!.id],
     queryFn: () =>
       getAttendingEventByUserId({
-        userId: '202e33d4-cdad-457c-bf56-8e541df30806',
+        userId: userInfo!.id,
+        token: accessToken,
       }),
   });
   console.log('attendingEvents', attendingEvents);
@@ -43,7 +46,7 @@ const EventsList = () => {
           </Heading>
 
           {status === 'loading' && <Spinner />}
-          {userInfo.isOrganizer && (
+          {userInfo?.isOrganizer && (
             <Button mt={8} width={200} colorScheme="gray" color="black">
               Pridať nový event
             </Button>
@@ -59,9 +62,10 @@ const EventsList = () => {
             <Grid templateColumns="repeat(2, 1fr)" gap={6}>
               {attendingEvents?.map((event) => (
                 <Card
+                  key={event.id}
                   description={event.description}
                   title={event.title}
-                  date={'10.1.2023'}
+                  date={getDateAsText(new Date(event.date))}
                   onClickMore={() => navigate(`/eventDetails/${event.id}`)}
                 />
               ))}

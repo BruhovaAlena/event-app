@@ -18,10 +18,11 @@ import { useQuery } from '@tanstack/react-query';
 import { getAllEvents } from '../utils/event';
 import { Event } from '../types/event';
 import Card from '../components/Card';
+import { getDateAsText } from '../utils/date';
 
 const Home = () => {
   const navigate = useNavigate();
-  const { userInfo } = useContext(UserContext);
+  const { userInfo, accessToken } = useContext(UserContext);
 
   const {
     status,
@@ -29,8 +30,9 @@ const Home = () => {
     data: events,
   } = useQuery<Event[]>({
     queryKey: ['events'],
-    queryFn: getAllEvents,
+    queryFn: () => getAllEvents({ token: accessToken }),
   });
+  console.log('events', events);
 
   return (
     <Container maxW="container.lg">
@@ -41,7 +43,7 @@ const Home = () => {
           </Heading>
 
           {status === 'loading' && <Spinner />}
-          {userInfo.isOrganizer === false && (
+          {userInfo?.isOrganizer && (
             <Button mt={8} width={200} colorScheme="gray" color="black">
               Pridať nový event
             </Button>
@@ -57,9 +59,10 @@ const Home = () => {
             <Grid templateColumns="repeat(2, 1fr)" gap={6}>
               {events?.map((event) => (
                 <Card
+                  key={event.id}
                   description={event.description}
                   title={event.title}
-                  date={'10.1.2023'}
+                  date={getDateAsText(new Date(event.date))}
                   onClickMore={() => navigate(`/eventDetails/${event.id}`)}
                 />
               ))}

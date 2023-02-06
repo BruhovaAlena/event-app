@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Flex,
   Heading,
@@ -23,6 +23,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { userRegistration } from '../utils/user';
+import { UserContext } from '../context/UserContext';
 
 enum FieldName {
   email = 'email',
@@ -60,7 +61,8 @@ const schema = yup.object({
 
 const Register = () => {
   const navigate = useNavigate();
-
+  const { registerUser } = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
   const formMethods = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -69,6 +71,7 @@ const Register = () => {
       [FieldName.name]: '',
       [FieldName.surname]: '',
       [FieldName.address]: '',
+      [FieldName.isOrganizer]: false,
     },
   });
   // console.log(process.env.REACT_APP_API_BASE_URL);
@@ -81,19 +84,10 @@ const Register = () => {
   const [selected, setSelected] = useState(false);
 
   const onClickRegister = async (e: any) => {
-    await handleSubmit((data) => {
-      userRegistration({
-        userData: {
-          name: data.name,
-          surname: data.surname,
-          address: data.address,
-          email: data.email,
-          isOrganizer: selected,
-          password: data.password,
-        },
-        onSuccess: () => {
-          navigate('/home');
-        },
+    await handleSubmit(async (formValues) => {
+      await registerUser({
+        ...formValues,
+        onSuccess: () => navigate('/noheader/login'),
       });
     })(e);
   };
