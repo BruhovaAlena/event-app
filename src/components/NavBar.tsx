@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Box,
   Flex,
@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react';
 import { Link as RouteLink, useNavigate } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
+import { UserContext } from '../context/UserContext';
 
 type NavLinkProps = { text: string };
 const NavLink = ({ text }: NavLinkProps) => (
@@ -28,6 +29,7 @@ const NavLink = ({ text }: NavLinkProps) => (
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const { logout } = useContext(UserContext);
 
   return (
     <>
@@ -69,7 +71,13 @@ const NavBar = () => {
                 </MenuItem>
                 <MenuItem></MenuItem>
                 <MenuDivider />
-                <MenuItem>Odhlásenie</MenuItem>
+                <MenuItem
+                  onClick={async () =>
+                    await logout(() => navigate('/noheader'))
+                  }
+                >
+                  Odhlásiť sa
+                </MenuItem>
               </MenuList>
             </Menu>
           </Flex>

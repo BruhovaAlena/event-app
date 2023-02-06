@@ -49,7 +49,7 @@ const Landing = () => {
                 bg: 'blue.500',
               }}
               onClick={() => {
-                navigate('/login');
+                navigate('/noheader/login');
               }}
             >
               Prihlásenie
@@ -57,7 +57,7 @@ const Landing = () => {
             <Button
               rounded={'full'}
               onClick={() => {
-                navigate('/register');
+                navigate('/noheader/register');
               }}
             >
               Registrácia

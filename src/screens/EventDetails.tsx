@@ -68,9 +68,11 @@ import {
   IoLogoBitcoin,
   IoSearchSharp,
   IoHomeOutline,
+  IoManOutline,
+  IoPeopleCircleOutline,
   IoCalendarNumberOutline,
 } from 'react-icons/io5';
-import { ReactElement } from 'react';
+import { ReactElement, useContext } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getAttendingEventIdsByUserId,
@@ -81,6 +83,7 @@ import {
 import { Event } from '../types/event';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getDateAsText } from '../utils/date';
+import { UserContext } from '../context/UserContext';
 
 interface FeatureProps {
   text: string;
@@ -108,33 +111,39 @@ const Feature = ({ text, icon, iconBg }: FeatureProps) => {
 
 export default function EventDetails() {
   const navigate = useNavigate();
+  const { accessToken, userInfo } = useContext(UserContext);
   const { eventId } = useParams();
   const queryClient = useQueryClient();
 
   const {
     status,
     error,
+    isFetching,
+    isLoading,
     data: event,
   } = useQuery<Event>({
-    queryKey: ['events', eventId],
-    queryFn: () => getEvent({ eventId: eventId! }),
+    queryKey: ['event', eventId],
+    queryFn: () => getEvent({ eventId: eventId!, token: accessToken }),
     enabled: Boolean(eventId),
   });
 
   const { data: attendingEventsId } = useQuery<string[]>({
+    enabled: Boolean(userInfo?.id),
     queryKey: ['attendingEventsId'],
     queryFn: () =>
       getAttendingEventIdsByUserId({
-        userId: '202e33d4-cdad-457c-bf56-8e541df30806',
+        userId: userInfo!.id,
+        token: accessToken,
       }),
   });
-  console.log('attendingEventsId', attendingEventsId);
+  console.log('isLoading', isLoading);
+  console.log('isFetching', isFetching);
 
   const postMutationClickLogin = useMutation({
     mutationFn: logToEvent,
     onSuccess: (data) => {
-      queryClient.setQueryData(['events', eventId], data);
-      queryClient.invalidateQueries(['events'], { exact: true });
+      queryClient.setQueryData(['event', eventId], data);
+      queryClient.invalidateQueries(['event']);
       alert('prihlasenie sa podarilo');
     },
     onError: () => {
@@ -157,7 +166,7 @@ export default function EventDetails() {
     if (eventId) {
       postMutationClickLogin.mutate({
         eventId: eventId,
-        userId: '202e33d4-cdad-457c-bf56-8e541df30806',
+        token: accessToken,
       });
     }
   };
@@ -165,7 +174,7 @@ export default function EventDetails() {
     if (eventId) {
       deleteMutationClickLogout.mutate({
         eventId: eventId,
-        userId: '202e33d4-cdad-457c-bf56-8e541df30806',
+        token: accessToken,
       });
     }
   };
@@ -175,6 +184,10 @@ export default function EventDetails() {
     : false;
 
   console.log('isAttendingEvent', isAttendingEvent);
+
+  const capacity = `${
+    event?.numberOfAttendees ? String(event?.numberOfAttendees) : 0
+  } / ${String(event?.maxCapacity)}`;
 
   return (
     <Container maxW={'5xl'} py={12}>
@@ -192,6 +205,11 @@ export default function EventDetails() {
           >
             Our Story
           </Text> */}
+          <Text>
+            {status}
+            {isLoading}
+            {isFetching}
+          </Text>
           <Heading>{event?.title}</Heading>
           <Text color={'gray.500'} fontSize={'lg'}>
             {event?.description}
@@ -223,12 +241,35 @@ export default function EventDetails() {
                     />
                   }
                   iconBg="green.100"
-                  //date ako string
                   text={getDateAsText(new Date(event.date))}
+                />
+                <Feature
+                  icon={
+                    <Icon
+                      as={IoPeopleCircleOutline}
+                      color={'red.900'}
+                      w={5}
+                      h={5}
+                    />
+                  }
+                  iconBg="red.100"
+                  text={capacity}
                 />
               </>
             )}
-            {isAttendingEvent ? (
+            {event?.maxCapacity === event?.numberOfAttendees ? (
+              <Button
+                rounded={'full'}
+                bg={'blue.400'}
+                color={'white'}
+                _hover={{
+                  bg: 'blue.500',
+                }}
+                onClick={onClickLogout}
+              >
+                neda sa prihlasit
+              </Button>
+            ) : isAttendingEvent ? (
               <Button
                 rounded={'full'}
                 bg={'blue.400'}

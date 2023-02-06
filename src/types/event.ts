@@ -7,4 +7,6 @@ export type Event = {
   createdAt: Date;
   updatedAt: Date;
   place: string;
+  maxCapacity: number;
+  numberOfAttendees: number;
 };
