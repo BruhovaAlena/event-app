@@ -13,7 +13,6 @@ import {
   FormErrorMessage,
   Checkbox,
   FormLabel,
-  FormHelperText,
   InputRightElement,
 } from '@chakra-ui/react';
 import { FaUserAlt, FaLock, FaAddressCard } from 'react-icons/fa';
@@ -22,7 +21,6 @@ import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { FormProvider, useForm } from 'react-hook-form';
-import { userRegistration } from '../utils/user';
 import { UserContext } from '../context/UserContext';
 
 enum FieldName {
@@ -74,7 +72,7 @@ const Register = () => {
       [FieldName.isOrganizer]: false,
     },
   });
-  // console.log(process.env.REACT_APP_API_BASE_URL);
+
   const {
     handleSubmit,
     register,

@@ -94,7 +94,7 @@ export const getAttendingEventIdsByUserId = async ({
     },
     data: { userId },
   });
-  console.log('response.data', response.data);
+
   return response.data;
 };
 
@@ -115,13 +115,12 @@ export const getAttendingEventByUserId = async ({
     },
     data: { userId },
   });
-  console.log('response.data', response.data);
+
   return response.data;
 };
 
 type LogToEvent = {
   eventId: string;
-
   token: string;
 };
 
@@ -149,6 +148,61 @@ export const logoutFromEvent = async ({ eventId, token }: LogoutFromEvent) => {
     method: 'delete',
     baseURL: process.env.REACT_APP_API_BASE_URL,
     url: `/events/logout`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    data: {
+      eventId,
+    },
+  });
+};
+
+type EditEvent = {
+  eventId: string;
+  token: string;
+  date: string;
+  description: string;
+  maxCapacity: number;
+  place: string;
+  title: string;
+};
+
+export const editEvent = async ({
+  eventId,
+  token,
+  date,
+  description,
+  maxCapacity,
+  place,
+  title,
+}: EditEvent) => {
+  await axios({
+    method: 'put',
+    baseURL: process.env.REACT_APP_API_BASE_URL,
+    url: `/events/editEvent/${eventId}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    data: {
+      date,
+      description,
+      maxCapacity,
+      place,
+      title,
+    },
+  });
+};
+
+type DeleteEvent = {
+  eventId: string;
+  token: string;
+};
+
+export const deleteEvent = async ({ eventId, token }: DeleteEvent) => {
+  await axios({
+    method: 'delete',
+    baseURL: process.env.REACT_APP_API_BASE_URL,
+    url: `/events/deleteEvent`,
     headers: {
       Authorization: `Bearer ${token}`,
     },

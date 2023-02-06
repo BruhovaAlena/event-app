@@ -1,55 +1,3 @@
-// import React, { useState } from 'react';
-// import { Flex, Heading, Button, Stack, Text } from '@chakra-ui/react';
-// import { useNavigate, useParams } from 'react-router-dom';
-// import { useQuery } from '@tanstack/react-query';
-// import { getEvent } from '../utils/event';
-// import { Event } from '../types/event';
-
-// const EventDetails = () => {
-//   const navigate = useNavigate();
-//   const { id } = useParams();
-//   console.log('id', id);
-//   const {
-//     status,
-//     error,
-//     data: event,
-//   } = useQuery<Event>({
-//     queryKey: ['events', id],
-//     queryFn: () => getEvent({ id: id! }),
-//     enabled: Boolean(id),
-//   });
-
-//   return (
-//     <Flex
-//       flexDirection="column"
-//       backgroundColor="purple.100"
-//       width="100wh"
-//       height="100vh"
-//       alignItems="center"
-//       justifyContent="center"
-//     >
-//       <Stack flexDirection="column" alignItems="center" justifyContent="center">
-//         <Heading>{event?.title}</Heading>
-//         <Heading>{id}</Heading>
-
-//         <Text textAlign={'justify'}>{event?.description}</Text>
-//         <Text textAlign={'justify'}>{}</Text>
-//       </Stack>
-//       <Button
-//         mt={8}
-//         width={200}
-//         colorScheme="gray"
-//         color="black"
-//         onClick={() => console.log('ahoj')}
-//       >
-//         Prihlásiť sa
-//       </Button>
-//     </Flex>
-//   );
-// };
-
-// export default EventDetails;
-
 import {
   Container,
   SimpleGrid,
@@ -64,17 +12,14 @@ import {
   Button,
 } from '@chakra-ui/react';
 import {
-  IoAnalyticsSharp,
-  IoLogoBitcoin,
-  IoSearchSharp,
   IoHomeOutline,
-  IoManOutline,
   IoPeopleCircleOutline,
   IoCalendarNumberOutline,
 } from 'react-icons/io5';
 import { ReactElement, useContext } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  deleteEvent,
   getAttendingEventIdsByUserId,
   getEvent,
   logoutFromEvent,
@@ -136,8 +81,6 @@ export default function EventDetails() {
         token: accessToken,
       }),
   });
-  console.log('isLoading', isLoading);
-  console.log('isFetching', isFetching);
 
   const postMutationClickLogin = useMutation({
     mutationFn: logToEvent,
@@ -162,6 +105,19 @@ export default function EventDetails() {
     },
   });
 
+  const deleteMutationClickDeleteEvent = useMutation({
+    mutationFn: deleteEvent,
+    onSuccess: (data) => {
+      queryClient.setQueryData(['events', eventId], data);
+      queryClient.invalidateQueries(['events'], { exact: true });
+      navigate('/home');
+      alert('event vymazany');
+    },
+    onError: () => {
+      alert('vymazanie sa nepodarilo');
+    },
+  });
+
   const onClickLoginToEvent = () => {
     if (eventId) {
       postMutationClickLogin.mutate({
@@ -178,12 +134,18 @@ export default function EventDetails() {
       });
     }
   };
+  const onClickDeleteEvent = () => {
+    if (eventId) {
+      deleteMutationClickDeleteEvent.mutate({
+        eventId: eventId,
+        token: accessToken,
+      });
+    }
+  };
 
   const isAttendingEvent = eventId
     ? attendingEventsId?.includes(eventId)
     : false;
-
-  console.log('isAttendingEvent', isAttendingEvent);
 
   const capacity = `${
     event?.numberOfAttendees ? String(event?.numberOfAttendees) : 0
@@ -267,7 +229,7 @@ export default function EventDetails() {
                 }}
                 onClick={onClickLogout}
               >
-                neda sa prihlasit
+                Plná kapacita
               </Button>
             ) : isAttendingEvent ? (
               <Button
@@ -293,6 +255,33 @@ export default function EventDetails() {
               >
                 Prihlásiť sa
               </Button>
+            )}
+
+            {userInfo?.isOrganizer && userInfo.id === event?.userId && (
+              <>
+                <Button
+                  rounded={'full'}
+                  bg={'blue.400'}
+                  color={'white'}
+                  _hover={{
+                    bg: 'blue.500',
+                  }}
+                  onClick={() => navigate(`/noheader/editEvent/${eventId}`)}
+                >
+                  Upraviť event
+                </Button>
+                <Button
+                  rounded={'full'}
+                  bg={'blue.400'}
+                  color={'white'}
+                  _hover={{
+                    bg: 'blue.500',
+                  }}
+                  onClick={onClickDeleteEvent}
+                >
+                  Vymazať event
+                </Button>
+              </>
             )}
           </Stack>
         </Stack>

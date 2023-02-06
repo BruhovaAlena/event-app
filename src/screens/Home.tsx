@@ -2,15 +2,11 @@ import React, { useContext } from 'react';
 import {
   Button,
   Heading,
-  Text,
   VStack,
   Container,
-  Center,
   Spinner,
   Flex,
   Grid,
-  useBreakpointValue,
-  useColorModeValue,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
