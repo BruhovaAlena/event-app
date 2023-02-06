@@ -9,20 +9,18 @@ import {
   Box,
   Icon,
   Button,
-  Text,
   FormErrorMessage,
   FormControl,
   InputRightElement,
   FormLabel,
-  tokenToCSSVar,
 } from '@chakra-ui/react';
-import { FaUserAlt, FaLock } from 'react-icons/fa';
+import { FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { UserContext } from '../context/UserContext';
-import { UserData, userLogin } from '../utils/user';
+import { UserData } from '../utils/user';
 import { MdAlternateEmail } from 'react-icons/md';
 
 enum FieldName {

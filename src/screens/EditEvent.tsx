@@ -9,13 +9,17 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
+  Spinner,
 } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
-import { createEvent } from '../utils/event';
+import { useNavigate, useParams } from 'react-router-dom';
+import { editEvent } from '../utils/event';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { UserContext } from '../context/UserContext';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getEvent } from '../utils/event';
+import { Event } from '../types/event';
 
 enum FieldName {
   title = 'title',
@@ -43,19 +47,38 @@ const schema = yup.object({
     .required('Zadaj maximálnu kapacitu, prosím.'),
 });
 
-const CreateEvent = () => {
+const EditEvent = () => {
   const navigate = useNavigate();
+  const { eventId } = useParams();
   const { accessToken, userInfo } = useContext(UserContext);
+
+  const {
+    status,
+    error,
+    isFetching,
+    isLoading,
+    data: event,
+  } = useQuery<Event>({
+    queryKey: ['event', eventId],
+    queryFn: () => getEvent({ eventId: eventId!, token: accessToken }),
+    enabled: Boolean(eventId),
+  });
+
+  const datum = event?.date.split('T')[0];
 
   const formMethods = useForm<FormValues>({
     resolver: yupResolver(schema),
+    // @ts-ignore
     defaultValues: {
-      [FieldName.title]: '',
-      [FieldName.description]: '',
-      [FieldName.place]: '',
+      [FieldName.title]: event?.title,
+      [FieldName.description]: event?.description,
+      [FieldName.place]: event?.place,
+      [FieldName.capacity]: event?.maxCapacity,
+      [FieldName.date]: datum,
     },
   });
 
+  console.log('event.date', event?.date);
   const {
     handleSubmit,
     register,
@@ -63,22 +86,39 @@ const CreateEvent = () => {
     setError,
   } = formMethods;
 
-  const onClickAddEvent = async (e: any) => {
+  const queryClient = useQueryClient();
+
+  const putMutationOnClickEdit = useMutation({
+    mutationFn: editEvent,
+    onSuccess: (data) => {
+      queryClient.setQueryData(['event', eventId], data);
+      queryClient.invalidateQueries(['event'], { exact: true });
+      navigate(`/eventDetails/${eventId}`);
+    },
+    onError: () => {
+      alert('nepodarilo sa');
+    },
+  });
+
+  const onClickEdit = async (e: any) => {
     await handleSubmit((formValues) => {
-      if (userInfo?.id) {
-        createEvent({
-          place: formValues.place,
+      if (eventId) {
+        putMutationOnClickEdit.mutate({
+          eventId: eventId,
+          token: accessToken,
           date: String(formValues.date),
           description: formValues.description,
-          title: formValues.title,
-          userId: userInfo.id,
           maxCapacity: formValues.capacity,
-          token: accessToken,
-          onAddSuccess: () => navigate('/home'),
+          place: formValues.place,
+          title: formValues.title,
         });
       }
     })(e);
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <Flex
@@ -90,7 +130,7 @@ const CreateEvent = () => {
       justifyContent="center"
     >
       <Stack flexDirection="column" alignItems="center" justifyContent="center">
-        <Heading>Zadaj info o evente</Heading>
+        <Heading>Úprava eventu</Heading>
 
         <Box minW={{ base: '90%', md: '468px' }}>
           <FormProvider {...formMethods}>
@@ -159,10 +199,10 @@ const CreateEvent = () => {
                     _hover={{
                       bg: 'blue.500',
                     }}
-                    onClick={onClickAddEvent}
+                    onClick={onClickEdit}
                     isLoading={isSubmitting}
                   >
-                    Vytvoriť event
+                    Uložiť zmeny
                   </Button>
                 </Stack>
               </Box>
@@ -174,4 +214,4 @@ const CreateEvent = () => {
   );
 };
 
-export default CreateEvent;
+export default EditEvent;

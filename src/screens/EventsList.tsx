@@ -7,7 +7,6 @@ import {
   Spinner,
   Flex,
   Grid,
-  useColorModeValue,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
@@ -20,7 +19,6 @@ import { getDateAsText } from '../utils/date';
 const EventsList = () => {
   const navigate = useNavigate();
   const { userInfo, accessToken } = useContext(UserContext);
-  let boxBg = useColorModeValue('white !important', '#111c44 !important');
 
   const {
     data: attendingEvents,

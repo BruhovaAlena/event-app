@@ -2,10 +2,10 @@ export type Event = {
   id: string;
   title: string;
   description: string;
-  date: Date;
+  date: string;
   userId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   place: string;
   maxCapacity: number;
   numberOfAttendees: number;
