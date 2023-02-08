@@ -10,11 +10,14 @@ import {
   Icon,
   useColorModeValue,
   Button,
+  VStack,
+  HStack,
 } from '@chakra-ui/react';
 import {
   IoHomeOutline,
   IoPeopleCircleOutline,
   IoCalendarNumberOutline,
+  IoTimeOutline,
 } from 'react-icons/io5';
 import { ReactElement, useContext } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -27,8 +30,9 @@ import {
 } from '../utils/event';
 import { Event } from '../types/event';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getDateAsText } from '../utils/date';
+import { getDateAsText, getTimeAsText } from '../utils/date';
 import { UserContext } from '../context/UserContext';
+import CountdownTimer from '../components/CountdownTimer';
 
 interface FeatureProps {
   text: string;
@@ -151,6 +155,8 @@ export default function EventDetails() {
     event?.numberOfAttendees ? String(event?.numberOfAttendees) : 0
   } / ${String(event?.maxCapacity)}`;
 
+  const eventDateInMsFromNow = event ? new Date(event?.date).getTime() : null;
+
   return (
     <Container maxW={'5xl'} py={12}>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
@@ -167,12 +173,9 @@ export default function EventDetails() {
           >
             Our Story
           </Text> */}
-          <Text>
-            {status}
-            {isLoading}
-            {isFetching}
-          </Text>
+
           <Heading>{event?.title}</Heading>
+
           <Text color={'gray.500'} fontSize={'lg'}>
             {event?.description}
           </Text>
@@ -207,6 +210,13 @@ export default function EventDetails() {
                 />
                 <Feature
                   icon={
+                    <Icon as={IoTimeOutline} color={'purple.900'} w={5} h={5} />
+                  }
+                  iconBg="purple.100"
+                  text={getTimeAsText(new Date(event.date))}
+                />
+                <Feature
+                  icon={
                     <Icon
                       as={IoPeopleCircleOutline}
                       color={'red.900'}
@@ -220,17 +230,9 @@ export default function EventDetails() {
               </>
             )}
             {event?.maxCapacity === event?.numberOfAttendees ? (
-              <Button
-                rounded={'full'}
-                bg={'blue.400'}
-                color={'white'}
-                _hover={{
-                  bg: 'blue.500',
-                }}
-                onClick={onClickLogout}
-              >
-                Plná kapacita
-              </Button>
+              <Text>
+                Kapacita bola naplnená. Na event sa už nedá prihlásiť.
+              </Text>
             ) : isAttendingEvent ? (
               <Button
                 rounded={'full'}
@@ -258,7 +260,7 @@ export default function EventDetails() {
             )}
 
             {userInfo?.isOrganizer && userInfo.id === event?.userId && (
-              <>
+              <HStack>
                 <Button
                   rounded={'full'}
                   bg={'blue.400'}
@@ -281,11 +283,14 @@ export default function EventDetails() {
                 >
                   Vymazať event
                 </Button>
-              </>
+              </HStack>
             )}
           </Stack>
         </Stack>
-        <Flex>
+        <Flex flexDirection={'column'}>
+          {eventDateInMsFromNow && (
+            <CountdownTimer targetDate={eventDateInMsFromNow} />
+          )}
           <Image
             rounded={'md'}
             alt={'feature image'}

@@ -137,11 +137,10 @@ const CreateEvent = () => {
                 </FormControl>
 
                 <FormControl isInvalid={Boolean(errors.description)}>
-                  <FormLabel>Dátum konania</FormLabel>
+                  <FormLabel>Dátum a čas konania</FormLabel>
                   <Input
-                    type="date"
+                    type="datetime-local"
                     size="md"
-                    placeholder="Dátum konania"
                     {...register('date')}
                   />
                   <FormErrorMessage>

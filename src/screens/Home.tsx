@@ -28,7 +28,6 @@ const Home = () => {
     queryKey: ['events'],
     queryFn: () => getAllEvents({ token: accessToken }),
   });
-  console.log('events', events);
 
   return (
     <Container maxW="container.lg">
