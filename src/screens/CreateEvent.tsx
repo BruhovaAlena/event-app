@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Flex,
   Heading,
@@ -14,8 +14,10 @@ import { useNavigate } from 'react-router-dom';
 import { createEvent } from '../utils/event';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { UserContext } from '../context/UserContext';
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
+import PlaceAutocomplete from '../components/PlaceAutocomplete';
 
 enum FieldName {
   title = 'title',
@@ -53,6 +55,8 @@ const CreateEvent = () => {
       [FieldName.title]: '',
       [FieldName.description]: '',
       [FieldName.place]: '',
+      [FieldName.capacity]: undefined,
+      [FieldName.date]: undefined,
     },
   });
 
@@ -61,6 +65,7 @@ const CreateEvent = () => {
     register,
     formState: { errors, isSubmitting },
     setError,
+    control,
   } = formMethods;
 
   const onClickAddEvent = async (e: any) => {
@@ -122,7 +127,27 @@ const CreateEvent = () => {
 
                 <FormControl>
                   <FormLabel>Miesto konania</FormLabel>
-                  <Input type="text" {...register('place')} />
+                  {/* <Input type="text" {...register('place')} /> */}
+                  <Controller
+                    name="place"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <GooglePlacesAutocomplete
+                        apiOptions={{ language: 'sk', region: 'sk' }}
+                        selectProps={{
+                          placeValue: value,
+                          onChange: (newValue: {
+                            label: string;
+                            value: any;
+                          }) => {
+                            console.log('newValue', newValue);
+                            onChange(newValue.label);
+                          },
+                        }}
+                      />
+                    )}
+                  />
+
                   <FormErrorMessage>
                     {errors.place && errors.place.message}
                   </FormErrorMessage>
