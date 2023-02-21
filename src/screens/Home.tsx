@@ -6,6 +6,7 @@ import {
   Spinner,
   Flex,
   Grid,
+  Input,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
@@ -15,6 +16,7 @@ import { Event } from '../types/event';
 import Card from '../components/Card';
 import { getDateAsText } from '../utils/date';
 import Pagination from '../components/Pagination';
+import useDebounce from '../hooks/useDebounce';
 
 const PAGE_SIZE = 4;
 
@@ -24,6 +26,8 @@ const Home = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
+  const [searchInputValue, setSearchInputValue] = useState('');
+  const debouncedValue = useDebounce<string>(searchInputValue, 500);
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -35,12 +39,13 @@ const Home = () => {
     error,
     data: eventsData,
   } = useQuery<{ events: Event[]; totalCount: number }>({
-    queryKey: ['events', { accessToken, PAGE_SIZE, pageCount }],
+    queryKey: ['events', { accessToken, PAGE_SIZE, pageCount, debouncedValue }],
     queryFn: () =>
       getAllEvents({
         token: accessToken,
         numberOfEvents: PAGE_SIZE,
         skip: pageCount,
+        searchTitle: debouncedValue,
       }),
   });
 
@@ -69,11 +74,15 @@ const Home = () => {
         </Heading>
 
         {status === 'loading' && <Spinner />}
-        {/* {userInfo?.isOrganizer && (
-            <Button mt={8} width={200} colorScheme="gray" color="black">
-              Pridať nový event
-            </Button>
-          )} */}
+
+        <Input
+          placeholder="Vyhľadaj event"
+          size="md"
+          onChange={(ev) => setSearchInputValue(ev.target.value)}
+          value={searchInputValue}
+          width="200"
+          alignSelf={'flex-start'}
+        />
         {eventsData?.events && (
           <>
             <Flex
