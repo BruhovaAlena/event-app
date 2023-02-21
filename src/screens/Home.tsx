@@ -1,6 +1,5 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
-  Button,
   Heading,
   VStack,
   Container,
@@ -15,55 +14,98 @@ import { getAllEvents } from '../utils/event';
 import { Event } from '../types/event';
 import Card from '../components/Card';
 import { getDateAsText } from '../utils/date';
+import Pagination from '../components/Pagination';
+
+const PAGE_SIZE = 4;
 
 const Home = () => {
   const navigate = useNavigate();
-  const { userInfo, accessToken } = useContext(UserContext);
+  const { accessToken } = useContext(UserContext);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
+
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    setPageCount(pageNumber * PAGE_SIZE - PAGE_SIZE);
+  };
 
   const {
     status,
     error,
-    data: events,
-  } = useQuery<Event[]>({
-    queryKey: ['events'],
-    queryFn: () => getAllEvents({ token: accessToken }),
+    data: eventsData,
+  } = useQuery<{ events: Event[]; totalCount: number }>({
+    queryKey: ['events', { accessToken, PAGE_SIZE, pageCount }],
+    queryFn: () =>
+      getAllEvents({
+        token: accessToken,
+        numberOfEvents: PAGE_SIZE,
+        skip: pageCount,
+      }),
   });
+
+  const previousPage = () => {
+    if (currentPage !== 1) {
+      setCurrentPage(currentPage - 1);
+      setPageCount(pageCount - PAGE_SIZE);
+    }
+  };
+
+  const nextPage = () => {
+    if (
+      eventsData?.events &&
+      currentPage !== Math.ceil(eventsData.totalCount / PAGE_SIZE)
+    ) {
+      setCurrentPage(currentPage + 1);
+      setPageCount(pageCount + PAGE_SIZE);
+    }
+  };
 
   return (
     <Container maxW="container.lg">
       <VStack>
-        <Container maxW="container.md" textAlign="center">
-          <Heading size="2xl" mb={4} color="gray.700" mt={10}>
-            EVENTS, MEETUPS & CONFERENCES
-          </Heading>
+        <Heading size="2xl" mb={4} color="gray.700" mt={10}>
+          EVENTS, MEETUPS & CONFERENCES
+        </Heading>
 
-          {status === 'loading' && <Spinner />}
-          {userInfo?.isOrganizer && (
+        {status === 'loading' && <Spinner />}
+        {/* {userInfo?.isOrganizer && (
             <Button mt={8} width={200} colorScheme="gray" color="black">
               Pridať nový event
             </Button>
-          )}
-          <Flex
-            borderRadius="20px"
-            width="1000px"
-            direction="column"
-            backgroundColor="gray.300"
-            alignItems="center"
-            paddingY="10"
-          >
-            <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-              {events?.map((event) => (
-                <Card
-                  key={event.id}
-                  description={event.description}
-                  title={event.title}
-                  date={getDateAsText(new Date(event.date))}
-                  onClickMore={() => navigate(`/eventDetails/${event.id}`)}
-                />
-              ))}
-            </Grid>
-          </Flex>
-        </Container>
+          )} */}
+        {eventsData?.events && (
+          <>
+            <Flex
+              borderRadius="20px"
+              width="1000px"
+              direction="column"
+              backgroundColor="gray.300"
+              alignItems="center"
+              paddingY="10"
+            >
+              <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+                {eventsData.events.map((event) => (
+                  <Card
+                    key={event.id}
+                    description={event.description}
+                    title={event.title}
+                    date={getDateAsText(new Date(event.date))}
+                    onClickMore={() => navigate(`/eventDetails/${event.id}`)}
+                  />
+                ))}
+              </Grid>
+            </Flex>
+            <Pagination
+              datasPerPage={PAGE_SIZE}
+              totalDatas={eventsData.totalCount}
+              paginate={paginate}
+              previousPage={previousPage}
+              nextPage={nextPage}
+              currentPage={currentPage}
+            />{' '}
+          </>
+        )}
       </VStack>
     </Container>
   );

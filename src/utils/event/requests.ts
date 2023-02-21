@@ -47,15 +47,25 @@ export const createEvent = async ({
 
 type GetEvents = {
   token: string;
+  skip: number;
+  numberOfEvents: number;
 };
 
-export const getAllEvents = async ({ token }: GetEvents) => {
+export const getAllEvents = async ({
+  token,
+  numberOfEvents,
+  skip,
+}: GetEvents) => {
   const response = await axios({
     method: 'get',
     baseURL: process.env.REACT_APP_API_BASE_URL,
-    url: 'events',
+    url: `/events/m/`,
     headers: {
       Authorization: `Bearer ${token}`,
+    },
+    params: {
+      skip,
+      numberOfEvents,
     },
   });
   return response.data;

@@ -33,43 +33,46 @@ const EventsList = () => {
         token: accessToken,
       }),
   });
-  console.log('attendingEvents', attendingEvents);
 
   return (
     <Container maxW="container.lg">
       <VStack>
-        <Container maxW="container.md" textAlign="center">
-          <Heading size="2xl" mb={4} color="gray.700" mt={10}>
-            EVEnt list
-          </Heading>
+        <Heading size="2xl" mb={4} color="gray.700" mt={10}>
+          Zoznam eventov
+        </Heading>
 
-          {status === 'loading' && <Spinner />}
-          {userInfo?.isOrganizer && (
-            <Button mt={8} width={200} colorScheme="gray" color="black">
-              Pridať nový event
-            </Button>
-          )}
-          <Flex
-            borderRadius="20px"
-            width="1000px"
-            direction="column"
-            backgroundColor="gray.300"
-            alignItems="center"
-            paddingY="10"
+        {status === 'loading' && <Spinner />}
+        {userInfo?.isOrganizer && (
+          <Button
+            mt={8}
+            width={200}
+            colorScheme="gray"
+            color="black"
+            onClick={() => navigate('/noheader/createEvent')}
           >
-            <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-              {attendingEvents?.map((event) => (
-                <Card
-                  key={event.id}
-                  description={event.description}
-                  title={event.title}
-                  date={getDateAsText(new Date(event.date))}
-                  onClickMore={() => navigate(`/eventDetails/${event.id}`)}
-                />
-              ))}
-            </Grid>
-          </Flex>
-        </Container>
+            Pridať nový event
+          </Button>
+        )}
+        <Flex
+          borderRadius="20px"
+          width="1000px"
+          direction="column"
+          backgroundColor="gray.300"
+          alignItems="center"
+          paddingY="10"
+        >
+          <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+            {attendingEvents?.map((event) => (
+              <Card
+                key={event.id}
+                description={event.description}
+                title={event.title}
+                date={getDateAsText(new Date(event.date))}
+                onClickMore={() => navigate(`/eventDetails/${event.id}`)}
+              />
+            ))}
+          </Grid>
+        </Flex>
       </VStack>
     </Container>
   );
