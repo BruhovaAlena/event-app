@@ -50,6 +50,8 @@ type GetEvents = {
   skip?: number;
   numberOfEvents?: number;
   searchTitle?: string;
+  filterByDate?: string;
+  orderByDate?: string;
 };
 
 export const getAllEvents = async ({
@@ -57,6 +59,8 @@ export const getAllEvents = async ({
   numberOfEvents,
   skip,
   searchTitle,
+  filterByDate,
+  orderByDate,
 }: GetEvents) => {
   const response = await axios({
     method: 'get',
@@ -68,7 +72,10 @@ export const getAllEvents = async ({
     params: {
       skip,
       numberOfEvents,
-      searchTitle,
+      ...(searchTitle && { searchTitle }),
+      ...(filterByDate && { filterByDate }),
+
+      orderByDate,
     },
   });
   return response.data;

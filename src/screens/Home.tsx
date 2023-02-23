@@ -2,11 +2,12 @@ import React, { useContext, useState } from 'react';
 import {
   Heading,
   VStack,
-  Container,
+  HStack,
   Spinner,
   Flex,
   Grid,
   Input,
+  Select,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
@@ -29,6 +30,9 @@ const Home = () => {
   const [searchInputValue, setSearchInputValue] = useState('');
   const debouncedValue = useDebounce<string>(searchInputValue, 500);
 
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState('asc');
+
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
     setPageCount(pageNumber * PAGE_SIZE - PAGE_SIZE);
@@ -39,13 +43,25 @@ const Home = () => {
     error,
     data: eventsData,
   } = useQuery<{ events: Event[]; totalCount: number }>({
-    queryKey: ['events', { accessToken, PAGE_SIZE, pageCount, debouncedValue }],
+    queryKey: [
+      'events',
+      {
+        accessToken,
+        PAGE_SIZE,
+        pageCount,
+        debouncedValue,
+        selectedDate,
+        selectedOrder,
+      },
+    ],
     queryFn: () =>
       getAllEvents({
         token: accessToken,
         numberOfEvents: PAGE_SIZE,
         skip: pageCount,
         searchTitle: debouncedValue,
+        filterByDate: selectedDate,
+        orderByDate: selectedOrder,
       }),
   });
 
@@ -67,29 +83,67 @@ const Home = () => {
   };
 
   return (
-    <Container maxW="container.lg">
+    <Flex
+      background="url('https://images.unsplash.com/photo-1605707357299-9b4bf4dfb15a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')"
+      height="150vh"
+      bgSize="cover"
+      justifyContent="center"
+    >
       <VStack>
-        <Heading size="2xl" mb={4} color="gray.700" mt={10}>
+        <Heading size="2xl" mb={4} color="white" mt={10}>
           EVENTS, MEETUPS & CONFERENCES
         </Heading>
 
         {status === 'loading' && <Spinner />}
+        <HStack>
+          <Input
+            textColor={'whiteAlpha.700'}
+            placeholder="Vyhľadaj event"
+            size="md"
+            onChange={(ev) => setSearchInputValue(ev.target.value)}
+            value={searchInputValue}
+            alignSelf={'flex-start'}
+          />
 
-        <Input
-          placeholder="Vyhľadaj event"
-          size="md"
-          onChange={(ev) => setSearchInputValue(ev.target.value)}
-          value={searchInputValue}
-          width="200"
-          alignSelf={'flex-start'}
-        />
+          <Select
+            textColor={'whiteAlpha.700'}
+            placeholder="Zobraz eventy"
+            size="md"
+            value={selectedDate}
+            onChange={(ev) => setSelectedDate(ev.target.value)}
+          >
+            <option style={{ color: 'black' }} value="7days">
+              Do 7 dní
+            </option>
+            <option style={{ color: 'black' }} value="30days">
+              Do 30 dní
+            </option>
+            <option style={{ color: 'black' }} value="90days">
+              Do 90 dní
+            </option>
+          </Select>
+          <Select
+            textColor={'whiteAlpha.700'}
+            placeholder="Zoradenie eventov"
+            size="md"
+            value={selectedOrder}
+            onChange={(ev) => setSelectedOrder(ev.target.value)}
+          >
+            <option style={{ color: 'black' }} value="asc">
+              Vzostupne
+            </option>
+            <option style={{ color: 'black' }} value="desc">
+              Zostupne
+            </option>
+          </Select>
+        </HStack>
+
         {eventsData?.events && (
           <>
             <Flex
               borderRadius="20px"
               width="1000px"
               direction="column"
-              backgroundColor="gray.300"
               alignItems="center"
               paddingY="10"
             >
@@ -116,7 +170,7 @@ const Home = () => {
           </>
         )}
       </VStack>
-    </Container>
+    </Flex>
   );
 };
 

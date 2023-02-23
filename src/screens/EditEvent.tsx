@@ -50,15 +50,9 @@ const schema = yup.object({
 const EditEvent = () => {
   const navigate = useNavigate();
   const { eventId } = useParams();
-  const { accessToken, userInfo } = useContext(UserContext);
+  const { accessToken } = useContext(UserContext);
 
-  const {
-    status,
-    error,
-    isFetching,
-    isLoading,
-    data: event,
-  } = useQuery<Event>({
+  const { isLoading, data: event } = useQuery<Event>({
     queryKey: ['event', eventId],
     queryFn: () => getEvent({ eventId: eventId!, token: accessToken }),
     enabled: Boolean(eventId),
@@ -78,12 +72,10 @@ const EditEvent = () => {
     },
   });
 
-  console.log('event.date', event?.date);
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-    setError,
   } = formMethods;
 
   const queryClient = useQueryClient();
@@ -128,9 +120,12 @@ const EditEvent = () => {
       height="100vh"
       alignItems="center"
       justifyContent="center"
+      bgRepeat="no-repeat"
+      bgSize="cover"
+      background="url('https://images.unsplash.com/photo-1605707357299-9b4bf4dfb15a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')"
     >
       <Stack flexDirection="column" alignItems="center" justifyContent="center">
-        <Heading>Úprava eventu</Heading>
+        <Heading color={'white'}>Úprava eventu</Heading>
 
         <Box minW={{ base: '90%', md: '468px' }}>
           <FormProvider {...formMethods}>
@@ -143,6 +138,7 @@ const EditEvent = () => {
                 p={6}
                 m="10px auto"
                 as="form"
+                backgroundColor="whiteAlpha.800"
               >
                 <FormControl isInvalid={Boolean(errors.title)}>
                   <FormLabel>Názov udalosti</FormLabel>
@@ -194,10 +190,10 @@ const EditEvent = () => {
                     width={200}
                     mt={10}
                     rounded={'full'}
-                    bg={'blue.400'}
+                    bg={'darkblue'}
                     color={'white'}
                     _hover={{
-                      bg: 'blue.500',
+                      bg: 'blue.700',
                     }}
                     onClick={onClickEdit}
                     isLoading={isSubmitting}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Flex,
   Heading,
@@ -60,7 +60,7 @@ const schema = yup.object({
 const Register = () => {
   const navigate = useNavigate();
   const { registerUser } = useContext(UserContext);
-  const [loading, setLoading] = useState(false);
+
   const formMethods = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -85,7 +85,7 @@ const Register = () => {
     await handleSubmit(async (formValues) => {
       await registerUser({
         ...formValues,
-        onSuccess: () => navigate('/noheader/login'),
+        onSuccess: () => navigate('/login'),
       });
     })(e);
   };

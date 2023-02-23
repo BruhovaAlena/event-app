@@ -6,11 +6,8 @@ import {
   Link,
   Text,
   StackDivider,
-  useColorModeValue,
   Menu,
   MenuButton,
-  Button,
-  Avatar,
   MenuList,
   MenuItem,
   MenuDivider,
@@ -23,7 +20,9 @@ import { UserContext } from '../context/UserContext';
 type NavLinkProps = { text: string };
 const NavLink = ({ text }: NavLinkProps) => (
   <Link>
-    <Text fontSize="xl">{text}</Text>
+    <Text fontSize="xl" color={'darkblue'}>
+      {text}
+    </Text>
   </Link>
 );
 
@@ -33,7 +32,7 @@ const NavBar = () => {
 
   return (
     <>
-      <Box bg={'gray.100'} px={4}>
+      <Box bg={'whiteAlpha.400'} px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <HStack
             spacing={8}
@@ -51,13 +50,8 @@ const NavBar = () => {
           <Flex alignItems={'center'}>
             <Menu>
               <MenuButton
-                // as={Button}
-                // rounded={'full'}
-                // variant={'link'}
-                // cursor={'pointer'}
-                // minW={0}
                 as={IconButton}
-                color="blue.400"
+                color="darkblue"
                 aria-label="Options"
                 icon={<FaBars />}
                 variant="outline"
@@ -66,15 +60,13 @@ const NavBar = () => {
                 me="6px"
               ></MenuButton>
               <MenuList>
-                <MenuItem onClick={() => navigate('/noheader/createEvent')}>
+                <MenuItem onClick={() => navigate('/createEvent')}>
                   Pridať nový event
                 </MenuItem>
-                <MenuItem></MenuItem>
-                <MenuDivider />
+
+                <MenuDivider color={'darkblue'} />
                 <MenuItem
-                  onClick={async () =>
-                    await logout(() => navigate('/noheader'))
-                  }
+                  onClick={async () => await logout(() => navigate('/'))}
                 >
                   Odhlásiť sa
                 </MenuItem>
