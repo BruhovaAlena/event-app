@@ -1,13 +1,5 @@
 import React, { useContext } from 'react';
-import {
-  Button,
-  Heading,
-  VStack,
-  Container,
-  Spinner,
-  Flex,
-  Grid,
-} from '@chakra-ui/react';
+import { Button, Heading, VStack, Spinner, Flex, Grid } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import { useQuery } from '@tanstack/react-query';
@@ -35,9 +27,14 @@ const EventsList = () => {
   });
 
   return (
-    <Container maxW="container.lg">
+    <Flex
+      background="url('https://images.unsplash.com/photo-1605707357299-9b4bf4dfb15a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')"
+      height="150vh"
+      bgSize="cover"
+      justifyContent="center"
+    >
       <VStack>
-        <Heading size="2xl" mb={4} color="gray.700" mt={10}>
+        <Heading size="2xl" mb={4} color="white" mt={10}>
           Zoznam eventov
         </Heading>
 
@@ -48,7 +45,7 @@ const EventsList = () => {
             width={200}
             colorScheme="gray"
             color="black"
-            onClick={() => navigate('/noheader/createEvent')}
+            onClick={() => navigate('/createEvent')}
           >
             Pridať nový event
           </Button>
@@ -57,7 +54,6 @@ const EventsList = () => {
           borderRadius="20px"
           width="1000px"
           direction="column"
-          backgroundColor="gray.300"
           alignItems="center"
           paddingY="10"
         >
@@ -74,7 +70,7 @@ const EventsList = () => {
           </Grid>
         </Flex>
       </VStack>
-    </Container>
+    </Flex>
   );
 };
 

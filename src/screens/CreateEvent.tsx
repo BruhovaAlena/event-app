@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import {
   Flex,
   Heading,
@@ -17,7 +17,6 @@ import * as yup from 'yup';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { UserContext } from '../context/UserContext';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
-import PlaceAutocomplete from '../components/PlaceAutocomplete';
 
 enum FieldName {
   title = 'title',
@@ -64,7 +63,6 @@ const CreateEvent = () => {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-    setError,
     control,
   } = formMethods;
 
@@ -88,14 +86,16 @@ const CreateEvent = () => {
   return (
     <Flex
       flexDirection="column"
-      backgroundColor="white"
       width="100wh"
-      height="100vh"
       alignItems="center"
       justifyContent="center"
+      bgRepeat="no-repeat"
+      bgSize="cover"
+      height="100vh"
+      background="url('https://images.unsplash.com/photo-1605707357299-9b4bf4dfb15a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')"
     >
       <Stack flexDirection="column" alignItems="center" justifyContent="center">
-        <Heading>Zadaj info o evente</Heading>
+        <Heading color={'white'}>Zadaj info o evente</Heading>
 
         <Box minW={{ base: '90%', md: '468px' }}>
           <FormProvider {...formMethods}>
@@ -108,6 +108,7 @@ const CreateEvent = () => {
                 p={6}
                 m="10px auto"
                 as="form"
+                backgroundColor="whiteAlpha.800"
               >
                 <FormControl isInvalid={Boolean(errors.title)}>
                   <FormLabel>Názov udalosti</FormLabel>
@@ -178,10 +179,10 @@ const CreateEvent = () => {
                     width={200}
                     mt={10}
                     rounded={'full'}
-                    bg={'blue.400'}
+                    bg={'darkblue'}
                     color={'white'}
                     _hover={{
-                      bg: 'blue.500',
+                      bg: 'blue.700',
                     }}
                     onClick={onClickAddEvent}
                     isLoading={isSubmitting}

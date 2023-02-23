@@ -5,7 +5,7 @@ import DateTimeDisplay from './DateTimeDisplay';
 
 const ExpiredNotice = () => {
   return (
-    <Box>
+    <Box marginBottom={5}>
       <Text>Event sa už konal.</Text>
     </Box>
   );
@@ -20,7 +20,7 @@ type ShowCounerArgs = {
 
 const ShowCounter = ({ days, hours, minutes, seconds }: ShowCounerArgs) => {
   return (
-    <Box>
+    <Box marginBottom={5}>
       <Text>Do začiatku ostáva:</Text>
       <HStack>
         <DateTimeDisplay value={days} typeOfValue={'Dní'} />
