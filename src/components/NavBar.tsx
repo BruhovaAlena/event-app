@@ -1,20 +1,7 @@
 import React, { useContext } from 'react';
-import {
-  Box,
-  Flex,
-  HStack,
-  Link,
-  Text,
-  StackDivider,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
-  IconButton,
-} from '@chakra-ui/react';
+import { Flex, Link, Text, Icon, Stack, useDisclosure } from '@chakra-ui/react';
 import { Link as RouteLink, useNavigate } from 'react-router-dom';
-import { FaBars } from 'react-icons/fa';
+import { GiHamburgerMenu } from 'react-icons/gi';
 import { UserContext } from '../context/UserContext';
 
 type NavLinkProps = { text: string };
@@ -29,53 +16,58 @@ const NavLink = ({ text }: NavLinkProps) => (
 const NavBar = () => {
   const navigate = useNavigate();
   const { logout } = useContext(UserContext);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <>
-      <Box bg={'whiteAlpha.400'} px={4}>
-        <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-          <HStack
-            spacing={8}
-            alignItems={'center'}
-            divider={<StackDivider />}
-            as="nav"
+    <Flex
+      py={2}
+      px={4}
+      direction={['column', 'column', 'row']}
+      justifyContent="space-between"
+      bgColor="white"
+      position="sticky"
+      top="0"
+      width="100%"
+      overflow={'hidden'}
+      zIndex={1}
+    >
+      <Flex alignItems="center" wrap="wrap">
+        <Icon
+          as={GiHamburgerMenu}
+          onClick={isOpen ? onClose : onOpen}
+          display={['inline', 'inline', 'none']}
+          w="40px"
+          h="40px"
+          color="black"
+        />
+      </Flex>
+      <Flex
+        display={[isOpen ? 'flex' : 'none', isOpen ? 'flex' : 'none', 'flex']}
+      >
+        <Stack
+          direction={{ base: 'column', md: 'row' }}
+          align={{ sm: 'left', md: 'center' }}
+          spacing="30px"
+        >
+          <RouteLink to="/home">
+            <NavLink text="Domov" />
+          </RouteLink>
+          <RouteLink to="/eventsList">
+            <NavLink text="Moje eventy" />
+          </RouteLink>
+          <a
+            href="/"
+            style={{
+              color: '#000000',
+              fontSize: '20px',
+            }}
+            onClick={async () => await logout(() => navigate('/'))}
           >
-            <RouteLink to="/home">
-              <NavLink text="Domov" />
-            </RouteLink>
-            <RouteLink to="/eventsList">
-              <NavLink text="Moje eventy" />
-            </RouteLink>
-          </HStack>
-          <Flex alignItems={'center'}>
-            <Menu>
-              <MenuButton
-                as={IconButton}
-                color="darkblue"
-                aria-label="Options"
-                icon={<FaBars />}
-                variant="outline"
-                w="50px"
-                h="50px"
-                me="6px"
-              ></MenuButton>
-              <MenuList>
-                <MenuItem onClick={() => navigate('/createEvent')}>
-                  Pridať nový event
-                </MenuItem>
-
-                <MenuDivider color={'darkblue'} />
-                <MenuItem
-                  onClick={async () => await logout(() => navigate('/'))}
-                >
-                  Odhlásiť sa
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </Flex>
-        </Flex>
-      </Box>
-    </>
+            Odhlásiť sa
+          </a>
+        </Stack>
+      </Flex>
+    </Flex>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Button, Heading, VStack, Spinner, Flex, Grid } from '@chakra-ui/react';
+import { Button, Heading, Spinner, Flex } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import { useQuery } from '@tanstack/react-query';
@@ -12,11 +12,7 @@ const EventsList = () => {
   const navigate = useNavigate();
   const { userInfo, accessToken } = useContext(UserContext);
 
-  const {
-    data: attendingEvents,
-    status,
-    error,
-  } = useQuery<Event[]>({
+  const { data: attendingEvents, status } = useQuery<Event[]>({
     enabled: Boolean(userInfo?.id),
     queryKey: ['attendingEvents', userInfo!.id],
     queryFn: () =>
@@ -28,48 +24,56 @@ const EventsList = () => {
 
   return (
     <Flex
-      background="url('https://images.unsplash.com/photo-1605707357299-9b4bf4dfb15a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')"
-      height="150vh"
-      bgSize="cover"
-      justifyContent="center"
+      flexDir="column"
+      alignItems="center"
+      bgColor="whiteAlpha.900"
+      height="100vh"
     >
-      <VStack>
-        <Heading size="2xl" mb={4} color="white" mt={10}>
-          Zoznam eventov
-        </Heading>
-
-        {status === 'loading' && <Spinner />}
-        {userInfo?.isOrganizer && (
-          <Button
-            mt={8}
-            width={200}
-            colorScheme="gray"
-            color="black"
-            onClick={() => navigate('/createEvent')}
-          >
-            Pridať nový event
-          </Button>
-        )}
-        <Flex
-          borderRadius="20px"
-          width="1000px"
-          direction="column"
-          alignItems="center"
-          paddingY="10"
+      <Heading
+        mt="40px"
+        mb="30px"
+        color="blue.400"
+        size={{ base: 'xl', md: '2xl' }}
+        textAlign={'center'}
+      >
+        EVENTS, MEETUPS & CONFERENCES
+      </Heading>
+      {status === 'loading' && <Spinner />}
+      {userInfo?.isOrganizer && (
+        <Button
+          rounded={'full'}
+          mt={8}
+          width={200}
+          colorScheme="gray"
+          color="black"
+          onClick={() => navigate('/createEvent')}
+          _hover={{
+            bg: 'blue.400',
+          }}
         >
-          <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-            {attendingEvents?.map((event) => (
-              <Card
-                key={event.id}
-                description={event.description}
-                title={event.title}
-                date={getDateAsText(new Date(event.date))}
-                onClickMore={() => navigate(`/eventDetails/${event.id}`)}
-              />
-            ))}
-          </Grid>
-        </Flex>
-      </VStack>
+          Pridať nový event
+        </Button>
+      )}
+
+      <Flex
+        flexDir={{ base: 'column', md: 'row' }}
+        gap="10px"
+        flexWrap={{ md: 'wrap' }}
+        justifyContent={'center'}
+        alignItems="center"
+        w="full"
+        paddingY="10"
+      >
+        {attendingEvents?.map((event) => (
+          <Card
+            key={event.id}
+            description={event.description}
+            title={event.title}
+            date={getDateAsText(new Date(event.date))}
+            onClickMore={() => navigate(`/eventDetails/${event.id}`)}
+          />
+        ))}
+      </Flex>
     </Flex>
   );
 };

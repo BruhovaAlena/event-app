@@ -1,5 +1,4 @@
 import {
-  SimpleGrid,
   Image,
   Flex,
   Heading,
@@ -88,10 +87,10 @@ export default function EventDetails() {
     onSuccess: (data) => {
       queryClient.setQueryData(['event', eventId], data);
       queryClient.invalidateQueries(['event']);
-      alert('prihlasenie sa podarilo');
+      alert('Prihlásenie sa úspešne podarilo.');
     },
     onError: () => {
-      alert('prihlasenie sa nepodarilo');
+      alert('Prihlásenie sa nepodarilo.');
     },
   });
   const deleteMutationClickLogout = useMutation({
@@ -99,10 +98,10 @@ export default function EventDetails() {
     onSuccess: (data) => {
       queryClient.setQueryData(['events', eventId], data);
       queryClient.invalidateQueries(['events'], { exact: true });
-      alert('odhlasenie sa podarilo');
+      alert('Odhlásenie sa podarilo.');
     },
     onError: () => {
-      alert('odhlasenie sa nepodarilo');
+      alert('Odhlásenie sa nepodarilo.');
     },
   });
 
@@ -112,10 +111,10 @@ export default function EventDetails() {
       queryClient.setQueryData(['events', eventId], data);
       queryClient.invalidateQueries(['events'], { exact: true });
       navigate('/home');
-      alert('event vymazany');
+      alert('Event vymazaný.');
     },
     onError: () => {
-      alert('vymazanie sa nepodarilo');
+      alert('Vymazanie sa nepodarilo.');
     },
   });
 
@@ -155,30 +154,27 @@ export default function EventDetails() {
   const eventDateInMsFromNow = event ? new Date(event?.date).getTime() : null;
 
   return (
-    <Flex
-      bgSize={'cover'}
-      height="150vh"
-      background="url('https://images.unsplash.com/photo-1605707357299-9b4bf4dfb15a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')"
-      justifyContent="center"
-    >
+    <Flex bgColor="whiteAlpha.900" justifyContent="center" height="100vh">
       {status === 'loading' && <Spinner />}
       <Flex
         borderRadius="20px"
-        width="1000px"
-        direction="column"
-        alignItems="center"
+        width="full"
         paddingY="10"
         backgroundColor={'whiteAlpha.800'}
-        height="500"
         marginTop="10"
+        mx={{ base: '10px', md: '80px' }}
+        height="fit-content"
+        borderColor="blue.400"
+        borderWidth="1px"
+        shadow="1px 1px 3px rgba(0,0,0,0.3)"
       >
-        <SimpleGrid
-          columns={{ base: 1, md: 2 }}
-          spacing={10}
+        <Flex
           paddingLeft="10"
           paddingRight="10"
+          flexDir={{ base: 'column', lg: 'row' }}
+          gap="10px"
         >
-          <Stack spacing={4}>
+          <Stack spacing={4} width={{ lg: '50%', base: '100%' }}>
             <Heading>{event?.title}</Heading>
 
             <Text color={'gray.500'} fontSize={'lg'}>
@@ -254,7 +250,7 @@ export default function EventDetails() {
                   bg={'darkblue'}
                   color={'white'}
                   _hover={{
-                    bg: 'blue.700',
+                    bg: 'blue.400',
                   }}
                   onClick={onClickLogout}
                 >
@@ -266,7 +262,7 @@ export default function EventDetails() {
                   bg={'darkblue'}
                   color={'white'}
                   _hover={{
-                    bg: 'blue.700',
+                    bg: 'blue.400',
                   }}
                   onClick={onClickLoginToEvent}
                 >
@@ -275,7 +271,7 @@ export default function EventDetails() {
               )}
             </Stack>
           </Stack>
-          <Flex flexDirection={'column'}>
+          <Flex flexDirection={'column'} width={{ lg: '50%', base: '100%' }}>
             {eventDateInMsFromNow && (
               <CountdownTimer targetDate={eventDateInMsFromNow} />
             )}
@@ -306,7 +302,7 @@ export default function EventDetails() {
               </HStack>
             )}
           </Flex>
-        </SimpleGrid>
+        </Flex>
       </Flex>
     </Flex>
   );

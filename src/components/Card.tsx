@@ -30,6 +30,8 @@ const Card = ({ title, description, onClickMore, date }: EventCardProps) => {
       w={{ base: '315px', md: '345px' }}
       direction="column"
       shadow="1px 1px 3px rgba(0,0,0,0.3)"
+      borderColor="blue.400"
+      borderWidth="1px"
     >
       <Box p="20px">
         <Box>
@@ -77,7 +79,7 @@ const Card = ({ title, description, onClickMore, date }: EventCardProps) => {
               bg={'darkblue'}
               color={'white'}
               _hover={{
-                bg: 'blue.700',
+                bg: 'blue.400',
               }}
               onClick={onClickMore}
             >

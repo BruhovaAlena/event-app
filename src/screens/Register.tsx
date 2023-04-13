@@ -113,6 +113,8 @@ const Register = () => {
               p={6}
               m="10px auto"
               as="form"
+              borderRadius="20px"
+              borderColor="blue.400"
             >
               <Heading
                 w="100%"
@@ -122,7 +124,7 @@ const Register = () => {
               >
                 Registrácia
               </Heading>
-              <Flex>
+              <Flex flexDir={{ base: 'column', md: 'row' }}>
                 <FormControl isInvalid={Boolean(errors.name)} mr="5%">
                   <FormLabel htmlFor="first-name" fontWeight={'normal'}>
                     Meno

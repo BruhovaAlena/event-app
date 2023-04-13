@@ -88,7 +88,7 @@ const EditEvent = () => {
       navigate(`/eventDetails/${eventId}`);
     },
     onError: () => {
-      alert('nepodarilo sa');
+      alert('Úprava sa nepodarila.');
     },
   });
 
@@ -120,12 +120,10 @@ const EditEvent = () => {
       height="100vh"
       alignItems="center"
       justifyContent="center"
-      bgRepeat="no-repeat"
-      bgSize="cover"
-      background="url('https://images.unsplash.com/photo-1605707357299-9b4bf4dfb15a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')"
+      bgColor="whiteAlpha.900"
     >
       <Stack flexDirection="column" alignItems="center" justifyContent="center">
-        <Heading color={'white'}>Úprava eventu</Heading>
+        <Heading color="blue.400">Úprava eventu</Heading>
 
         <Box minW={{ base: '90%', md: '468px' }}>
           <FormProvider {...formMethods}>
@@ -139,6 +137,8 @@ const EditEvent = () => {
                 m="10px auto"
                 as="form"
                 backgroundColor="whiteAlpha.800"
+                borderColor="blue.400"
+                borderRadius="20px"
               >
                 <FormControl isInvalid={Boolean(errors.title)}>
                   <FormLabel>Názov udalosti</FormLabel>
@@ -193,7 +193,7 @@ const EditEvent = () => {
                     bg={'darkblue'}
                     color={'white'}
                     _hover={{
-                      bg: 'blue.700',
+                      bg: 'blue.400',
                     }}
                     onClick={onClickEdit}
                     isLoading={isSubmitting}

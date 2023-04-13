@@ -88,14 +88,13 @@ const CreateEvent = () => {
       flexDirection="column"
       width="100wh"
       alignItems="center"
-      justifyContent="center"
-      bgRepeat="no-repeat"
-      bgSize="cover"
       height="100vh"
-      background="url('https://images.unsplash.com/photo-1605707357299-9b4bf4dfb15a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')"
+      bgColor="gray.300"
     >
       <Stack flexDirection="column" alignItems="center" justifyContent="center">
-        <Heading color={'white'}>Zadaj info o evente</Heading>
+        <Heading mt="40px" color={'white'}>
+          Zadaj info o evente
+        </Heading>
 
         <Box minW={{ base: '90%', md: '468px' }}>
           <FormProvider {...formMethods}>
@@ -128,7 +127,6 @@ const CreateEvent = () => {
 
                 <FormControl>
                   <FormLabel>Miesto konania</FormLabel>
-                  {/* <Input type="text" {...register('place')} /> */}
                   <Controller
                     name="place"
                     control={control}
@@ -141,7 +139,6 @@ const CreateEvent = () => {
                             label: string;
                             value: any;
                           }) => {
-                            console.log('newValue', newValue);
                             onChange(newValue.label);
                           },
                         }}

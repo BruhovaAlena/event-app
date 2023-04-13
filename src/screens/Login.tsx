@@ -52,8 +52,8 @@ const Login = () => {
   const formMethods = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
-      [FieldName.email]: '8@8.com',
-      [FieldName.password]: 'osemosem',
+      [FieldName.email]: '',
+      [FieldName.password]: '',
     },
   });
 
@@ -104,6 +104,8 @@ const Login = () => {
             p={6}
             m="10px auto"
             as="form"
+            borderColor="blue.400"
+            borderRadius="20px"
           >
             <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="2%">
               Prihlásenie
@@ -152,9 +154,9 @@ const Login = () => {
                 {errors.password && errors.password.message}
               </FormErrorMessage>
             </FormControl>
-            <Button colorScheme="black" variant="link" mt={2}>
+            {/* <Button colorScheme="black" variant="link" mt={2}>
               Zabudol som heslo
-            </Button>
+            </Button> */}
             <Stack width="100%" alignContent="center" alignItems="center">
               <Button
                 width={200}

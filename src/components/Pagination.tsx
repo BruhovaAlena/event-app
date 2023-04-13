@@ -52,7 +52,9 @@ const Pagination = ({
             <Button
               key={number}
               onClick={() => paginate(number)}
-              backgroundColor={number === currentPage ? 'blue.400' : 'white'}
+              backgroundColor={number === currentPage ? 'darkblue' : 'white'}
+              color={number === currentPage ? 'white' : 'darkblue'}
+              _hover={{ backgroundColor: 'blue.700' }}
             >
               {number}
             </Button>
